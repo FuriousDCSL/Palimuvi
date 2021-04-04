@@ -109,6 +109,13 @@ public:
 		SMX_SetLights2(lights, 1350);
 
 	}
+	void clearLights() {
+		for (int i = 0; i < 1350; i++) {
+			lights[i] = 0;
+		}
+		updateLights();
+
+	}
 };
 
 int main()
@@ -116,14 +123,24 @@ int main()
 	InputSample demo;
 	int i = 0;
 	// Loop forever for this sample.
+
 	while (1)
 	{
-		
-		Sleep(30);
-		for (int i = 0; i < 100; i++) {
-			demo.SetLight(1, rand() % 19, rand() % 26, rand() % 255, rand() % 255, rand() % 255);
+		demo.clearLights();
+
+		for (int player = 0; player < 2; player++) {
+			for (int panel = 0; panel < 10; panel++) {
+				for (int light = 0; light < 26; light++) {
+					demo.SetLight(player, panel, light, 127, 0, 0);
+					Sleep(30);
+				}
+			}
 		}
-		demo.updateLights();
+		
+		//for (int i = 0; i < 100; i++) {
+		//	demo.SetLight(1, rand() % 19, rand() % 26, rand() % 255, rand() % 255, rand() % 255);
+		//}
+		//demo.updateLights();
 	}
 
 	return 0;
