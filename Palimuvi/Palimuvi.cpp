@@ -128,26 +128,27 @@ int main()
 	InputSample demo;
 	int i = 0;
 	// Loop forever for this sample.
+	demo.clearLights();
 
 	while (1)
 	{
-		demo.clearLights();
+		//demo.clearLights();
 
-		for (int player = 0; player < 2; player++) {
-			for (int panel = 0; panel < 9; panel++) {
-				for (int light = 0; light < 25; light++) {
-					int loc = demo.SetLight(player, panel, light, 127, 0, 0);
-					demo.updateLights();
-					printf("%u %u %u %u\n", player, panel, light, loc );
-					Sleep(30);
-				}
-			}
-		}
-		
-		//for (int i = 0; i < 100; i++) {
-		//	demo.SetLight(1, rand() % 19, rand() % 26, rand() % 255, rand() % 255, rand() % 255);
+		//for (int player = 0; player < 2; player++) {
+		//	for (int panel = 0; panel < 9; panel++) {
+		//		for (int light = 0; light < 25; light++) {
+		//			int loc = demo.SetLight(player, panel, light, 127, 0, 0);
+		//			demo.updateLights();
+		//			printf("%u %u %u %u\n", player, panel, light, loc );
+		//			Sleep(30);
+		//		}
+		//	}
 		//}
-		//demo.updateLights();
+		
+		for (int i = 0; i < 100; i++) {
+			demo.SetLight(1, rand() % 10, rand() % 26, rand() % 255, rand() % 255, rand() % 255);
+		}
+		demo.updateLights();
 	}
 
 	return 0;
