@@ -121,7 +121,7 @@ int main()
 		
 		Sleep(30);
 		for (int i = 0; i < 100; i++) {
-			demo.SetLight(0, rand() % 10, rand() % 26, rand() % 255, rand() % 255, rand() % 255);
+			demo.SetLight(1, rand() % 19, rand() % 26, rand() % 255, rand() % 255, rand() % 255);
 		}
 		demo.updateLights();
 	}
