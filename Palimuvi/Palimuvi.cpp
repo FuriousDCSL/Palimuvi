@@ -11,6 +11,8 @@ using namespace std;
 class InputSample
 {
 public:
+	uint8_t lights[1350];
+
 	InputSample()
 	{
 		// Set a logging callback.  This can be called before SMX_Start.
@@ -37,6 +39,13 @@ public:
 	{
 		printf("Device %i state changed: %04x\n", pad, SMX_GetInputState(pad));
 
+	}
+
+	void SetLight(uint8_t player, uint8_t panel, uint8_t light, uint8_t red, uint8_t blue, uint8_t green) {
+		int loc = player * 675 + panel * 25 + light;
+		lights[loc] = red;
+		lights[loc + 1] = blue;
+		lights[loc + 2] = green;
 	}
 
 	int iPanelToLight = 0;
@@ -106,12 +115,9 @@ int main()
 	while (1)
 	{
 		
-		Sleep(50);
-
-		demo.SetLights(i);
-		i++;
-		if (i > 255) {
-			i = 0;
+		Sleep(30);
+		for (int i = 0; i < 100; i++) {
+			demo.SetLight(0, rand() % 10, rand() % 26, rand() % 255, rand() % 255, rand() % 255);
 		}
 	}
 
