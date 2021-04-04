@@ -42,7 +42,7 @@ public:
 	}
 
 	void SetLight(uint8_t player, uint8_t panel, uint8_t light, uint8_t red, uint8_t blue, uint8_t green) {
-		int loc = player * 675 + panel * 25 + light;
+		int loc = player * 675 + panel * 9 + light * 25 + light;
 		lights[loc] = red;
 		lights[loc + 1] = blue;
 		lights[loc + 2] = green;
@@ -132,6 +132,7 @@ int main()
 			for (int panel = 0; panel < 10; panel++) {
 				for (int light = 0; light < 26; light++) {
 					demo.SetLight(player, panel, light, 127, 0, 0);
+					demo.updateLights();
 					Sleep(30);
 				}
 			}
