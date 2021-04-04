@@ -11,7 +11,7 @@ using namespace std;
 class InputSample
 {
 public:
-	uint8_t lights[1350];
+	char lights[1350];
 
 	InputSample()
 	{
@@ -105,6 +105,10 @@ public:
 
 		SMX_SetLights2(sLightsData.data(), sLightsData.size());
 	}
+	void updateLights() {
+		SMX_SetLights2(lights, 1350);
+
+	}
 };
 
 int main()
@@ -119,6 +123,7 @@ int main()
 		for (int i = 0; i < 100; i++) {
 			demo.SetLight(0, rand() % 10, rand() % 26, rand() % 255, rand() % 255, rand() % 255);
 		}
+		demo.updateLights();
 	}
 
 	return 0;
