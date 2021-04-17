@@ -1,5 +1,5 @@
 ﻿  Palimuvi.cpp
-C:\github\Palimuvi\Palimuvi\Palimuvi.cpp(265,5): warning C4305:  'argument': truncation from 'double' to 'float'
-C:\github\Palimuvi\Palimuvi\Palimuvi.cpp(266,1): warning C4305:  'argument': truncation from 'double' to 'float'
-C:\github\Palimuvi\Palimuvi\Palimuvi.cpp(277,33): warning C4326:  return type of 'main' should be 'int' instead of 'void'
+C:\github\Palimuvi\Palimuvi\Palimuvi.cpp(265,5): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\github\Palimuvi\Palimuvi\Palimuvi.cpp(266,1): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\github\Palimuvi\Palimuvi\Palimuvi.cpp(277,33): warning C4326: return type of 'main' should be 'int' instead of 'void'
   Palimuvi.vcxproj -> C:\github\Palimuvi\Palimuvi\Debug\Palimuvi.exe

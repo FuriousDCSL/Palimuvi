@@ -241,7 +241,7 @@ void burstLight(int panel, int level) {
 
 	for (int i = 0; i < 25; i++) {
 		int player = 1;
-		demo.SetLight(player, panel, i, burst[level][i], 0, 0);
+		demo.SetLight(1, panel, i, burst[level][i]*255, 0, 0);
 		printf("%d\t%d\t%d\t%d\n",player,panel,i, burst[level][i]);
 	}
 	return;
@@ -323,6 +323,7 @@ void main(int argc, char** argv){
 			}
 		}
 		printf("\n");
+		demo.updateLights();
 	}
 }
 
