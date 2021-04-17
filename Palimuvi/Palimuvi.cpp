@@ -2,11 +2,26 @@
 //
 
 #include <stdio.h>
-#include <windows.h>
 #include "SMX.h"
-#include <memory>
 #include <string>
+#include "bass.h"
+#include "basswasapi.h"
 using namespace std;
+
+#define SPECWIDTH 144	// display width
+#define SPECHEIGHT 8	// height (changing requires palette adjustments too)
+
+//HWND win;
+//DWORD timer;
+
+BASS_WASAPI_INFO info;
+
+HDC specdc;
+HBITMAP specbmp;
+BYTE* specbuf  = new BYTE[SPECWIDTH * SPECHEIGHT];
+
+int specmode, specpos; // spectrum mode (and marker pos for 2nd mode)
+
 
 class InputSample
 {
@@ -67,44 +82,44 @@ public:
 		{
 			for (int iPanel = 0; iPanel < 9; ++iPanel)
 			{
-				bool bLight = iPanel == iPanelToLight && iPad == 0;
-				if (!bLight)
-				{
-					// We're not lighting this panel, so append black for the 4x4 and 3x3 lights.
-					for (int iLED = 0; iLED < 25; ++iLED)
-						addColor(color, color, color);
-					continue;
-				}
+			bool bLight = iPanel == iPanelToLight && iPad == 0;
+			if (!bLight)
+			{
+				// We're not lighting this panel, so append black for the 4x4 and 3x3 lights.
+				for (int iLED = 0; iLED < 25; ++iLED)
+					addColor(color, color, color);
+				continue;
+			}
 
-				// Append light data for the outer 4x4 grid of lights.
-				addColor(0xFF, 0, 0);
-				addColor(0xFF, 0, 0);
-				addColor(0xFF, 0, 0);
-				addColor(0xFF, 0, 0);
-				addColor(0, 0xFF, 0);
-				addColor(0, 0xFF, 0);
-				addColor(0, 0xFF, 0);
-				addColor(0, 0xFF, 0);
-				addColor(0, 0, 0xFF);
-				addColor(0, 0, 0xFF);
-				addColor(0, 0, 0xFF);
-				addColor(0, 0, 0xFF);
-				addColor(0xFF, 0xFF, 0);
-				addColor(0xFF, 0xFF, 0);
-				addColor(0xFF, 0xFF, 0);
-				addColor(0xFF, 0xFF, 0);
+			// Append light data for the outer 4x4 grid of lights.
+			addColor(0xFF, 0, 0);
+			addColor(0xFF, 0, 0);
+			addColor(0xFF, 0, 0);
+			addColor(0xFF, 0, 0);
+			addColor(0, 0xFF, 0);
+			addColor(0, 0xFF, 0);
+			addColor(0, 0xFF, 0);
+			addColor(0, 0xFF, 0);
+			addColor(0, 0, 0xFF);
+			addColor(0, 0, 0xFF);
+			addColor(0, 0, 0xFF);
+			addColor(0, 0, 0xFF);
+			addColor(0xFF, 0xFF, 0);
+			addColor(0xFF, 0xFF, 0);
+			addColor(0xFF, 0xFF, 0);
+			addColor(0xFF, 0xFF, 0);
 
-				// Append light data for the inner 3x3 grid of lights, if present.  These
-				// are ignored if the platform doesn't have them.
-				addColor(0xFF, 0, 0);
-				addColor(0xFF, 0, 0);
-				addColor(0xFF, 0, 0);
-				addColor(0, 0xFF, 0);
-				addColor(0, 0xFF, 0);
-				addColor(0, 0xFF, 0);
-				addColor(0, 0, 0xFF);
-				addColor(0, 0, 0xFF);
-				addColor(0, 0, 0xFF);
+			// Append light data for the inner 3x3 grid of lights, if present.  These
+			// are ignored if the platform doesn't have them.
+			addColor(0xFF, 0, 0);
+			addColor(0xFF, 0, 0);
+			addColor(0xFF, 0, 0);
+			addColor(0, 0xFF, 0);
+			addColor(0, 0xFF, 0);
+			addColor(0, 0xFF, 0);
+			addColor(0, 0, 0xFF);
+			addColor(0, 0, 0xFF);
+			addColor(0, 0, 0xFF);
 			}
 		}
 
@@ -123,45 +138,191 @@ public:
 	}
 };
 
-int main()
+
+
+DWORD CALLBACK DuffRecording(void* buffer, DWORD length, void* user)
 {
-	InputSample demo;
-	int i = 0;
-	// Loop forever for this sample.
+	return TRUE; // continue recording
+}
+
+void Error(const char* text)
+{
+	printf("Error(%d): %s\n", BASS_ErrorGetCode(), text);
+	BASS_Free();
+	exit(0);
+}
+
+void ListDevices()
+{
+	BASS_DEVICEINFO di;
+	int a;
+	for (a = 0; BASS_GetDeviceInfo(a, &di); a++) {
+		if (di.flags & BASS_DEVICE_ENABLED) // enabled output device
+			printf("dev %d: %s\n", a, di.name);
+	}
+}
+
+float sumSamples(float* samples, int low, int high) {
+	float sum = 0;
+	for (int i = low; i < high; i++) {
+		sum += samples[i];
+	}
+	if (sum > 1) {
+		sum = 1;
+	}
+	return sum;
+}
+
+float* getSample(void) {
+
+	float fft[1024];
+	static float fsamSum[9];
+
+	BASS_WASAPI_GetData(fft, BASS_DATA_FFT2048); // get the FFT data
+	fsamSum[0] = sumSamples(fft, 0, 40);
+	fsamSum[1] = sumSamples(fft, 40, 60);
+	fsamSum[2] = sumSamples(fft, 60, 90);
+	fsamSum[3] = sumSamples(fft, 90, 135);
+	fsamSum[4] = sumSamples(fft, 135, 202);
+	fsamSum[5] = sumSamples(fft, 202, 303);
+	fsamSum[6] = sumSamples(fft, 303, 455);
+	fsamSum[7] = sumSamples(fft, 455, 683);
+	fsamSum[8] = sumSamples(fft, 683, 1024);
+
+	return fsamSum;
+
+}
+
+int burst[5][25] = {
+
+	//	00	01	02	03	04	05	06	07	08	09	10	11	12	13	14	15	16	17	18	19	20	21	22	23	24
+	{	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},
+	{	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	0,	0,	0,	0},
+	{	0,	0,	0,	0,	0,	1,	1,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	0,	0,	0,	0},
+	{	0,	0,	0,	0,	0,	1,	1,	0,	0,	1,	1,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1},
+	{	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1},
+};
+
+
+//for (int player = 0; player < 2; player++) {
+//	for (int panel = 0; panel < 9; panel++) {
+//		for (int light = 0; light < 25; light++) {
+//			int loc = demo.SetLight(player, panel, light, 127, 0, 0);
+//			demo.updateLights();
+//			printf("%u %u %u %u\n", player, panel, light, loc );
+//			Sleep(30);
+//		}
+//	}
+//}
+
+//for (int i = 0; i < 100; i++) {
+//	demo.SetLight(1, rand() % 10, rand() % 26, rand() % 255, rand() % 255, rand() % 255);
+//}
+//demo.updateLights();
+//
+
+//
+//
+//// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
+//// Debug program: F5 or Debug > Start Debugging menu
+//
+//// Tips for Getting Started: 
+////   1. Use the Solution Explorer window to add/manage files
+////   2. Use the Team Explorer window to connect to source control
+////   3. Use the Output window to see build output and other messages
+////   4. Use the Error List window to view errors
+////   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
+////   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+
+InputSample demo;
+
+
+void burstLight(int panel, int level) {
+
+	for (int i = 0; i < 25; i++) {
+		int player = 1;
+		demo.SetLight(player, panel, i, burst[level][i], 0, 0);
+		printf("%d\t%d\t%d\t%d\n",player,panel,i, burst[level][i]);
+	}
+	return;
+}
+
+
+void myBassInit(void) {
+	// check the correct BASS was loaded
+	if (HIWORD(BASS_GetVersion()) != BASSVERSION) {
+		Error("An incorrect version of BASS was loaded");
+		return;
+	}
+
+
+	BASS_SetConfig(BASS_CONFIG_NET_PLAYLIST, 1); // enable playlist processing
+	BASS_SetConfig(BASS_CONFIG_NET_PREBUF_WAIT, 0); // disable BASS_StreamCreateURL pre-buffering
+
+	// initialize output device
+	if (!BASS_Init(0, 44100, 0, 0, NULL))
+		printf("Can't initialize device");
+	if (!BASS_WASAPI_Init(-3, 0, 0, BASS_WASAPI_BUFFER, 1, 0.1, &DuffRecording, NULL)
+		&& !BASS_WASAPI_Init(-2, 0, 0, BASS_WASAPI_BUFFER, 1, 0.1, &DuffRecording, NULL)) {
+		Error("Can't initialize WASAPI device");
+	}
+
+
+	BASS_WASAPI_GetInfo(&info);
+	BASS_WASAPI_Start();
+
+}
+
+
+void main(int argc, char** argv){
+
+	int filep, device = -1;
+
+	printf("Palimuvi\n"
+		"--------------------------\n");
+	for (filep = 1; filep < argc; filep++) {
+		if (!strcmp(argv[filep], "-l")) {
+			ListDevices();
+			return;
+		}
+		else if (!strcmp(argv[filep], "-d") && filep + 1 < argc) device = atoi(argv[++filep]);
+		else break;
+	}
+
+	myBassInit();
+
 	demo.clearLights();
 
 	while (1)
 	{
-		//demo.clearLights();
 
-		//for (int player = 0; player < 2; player++) {
-		//	for (int panel = 0; panel < 9; panel++) {
-		//		for (int light = 0; light < 25; light++) {
-		//			int loc = demo.SetLight(player, panel, light, 127, 0, 0);
-		//			demo.updateLights();
-		//			printf("%u %u %u %u\n", player, panel, light, loc );
-		//			Sleep(30);
-		//		}
-		//	}
-		//}
-		
-		for (int i = 0; i < 100; i++) {
-			demo.SetLight(1, rand() % 10, rand() % 26, rand() % 255, rand() % 255, rand() % 255);
+		float* fsamSum;
+		fsamSum = getSample();
+		Sleep(30);
+		for (int i = 0; i < 9; i++) {
+//				printf("%d\t", int(fsamSum[i] * 255));
+			if (fsamSum[i] < 0.01) {
+//				printf("0\t");
+				burstLight(i, 0);
+			}
+			else if (fsamSum[i] < 0.25) {
+//				printf("1\t");
+				burstLight(i, 1);
+			}
+			else if (fsamSum[i] < 0.5) {
+//				printf("2\t");
+				burstLight(i, 2);
+			}
+			else if (fsamSum[i] < 0.75) {
+//				printf("3\t");
+				burstLight(i, 3);
+			}
+			else if (fsamSum[i] <= 1) {
+//				printf("4\t");
+				burstLight(i, 4);
+			}
 		}
-		demo.updateLights();
+		printf("\n");
 	}
-
-	return 0;
 }
 
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

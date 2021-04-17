@@ -157,9 +157,13 @@
     <None Include="SMX.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bass.h" />
+    <ClInclude Include="basswasapi.h" />
     <ClInclude Include="SMX.h" />
   </ItemGroup>
   <ItemGroup>
+    <Library Include="bass.lib" />
+    <Library Include="basswasapi.lib" />
     <Library Include="SMX.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

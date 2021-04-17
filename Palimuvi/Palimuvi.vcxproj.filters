@@ -26,8 +26,18 @@
     <ClInclude Include="SMX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bass.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="basswasapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="SMX.lib" />
+    <Library Include="bass.lib">
+      <Filter>Source Files</Filter>
+    </Library>
+    <Library Include="basswasapi.lib" />
   </ItemGroup>
 </Project>
