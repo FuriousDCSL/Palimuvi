@@ -8,19 +8,9 @@
 #include "basswasapi.h"
 using namespace std;
 
-#define SPECWIDTH 144	// display width
-#define SPECHEIGHT 8	// height (changing requires palette adjustments too)
-
-//HWND win;
-//DWORD timer;
 
 BASS_WASAPI_INFO info;
 
-HDC specdc;
-HBITMAP specbmp;
-BYTE* specbuf  = new BYTE[SPECWIDTH * SPECHEIGHT];
-
-int specmode, specpos; // spectrum mode (and marker pos for 2nd mode)
 
 
 class InputSample
@@ -204,35 +194,6 @@ int burst[5][25] = {
 };
 
 
-//for (int player = 0; player < 2; player++) {
-//	for (int panel = 0; panel < 9; panel++) {
-//		for (int light = 0; light < 25; light++) {
-//			int loc = demo.SetLight(player, panel, light, 127, 0, 0);
-//			demo.updateLights();
-//			printf("%u %u %u %u\n", player, panel, light, loc );
-//			Sleep(30);
-//		}
-//	}
-//}
-
-//for (int i = 0; i < 100; i++) {
-//	demo.SetLight(1, rand() % 10, rand() % 26, rand() % 255, rand() % 255, rand() % 255);
-//}
-//demo.updateLights();
-//
-
-//
-//
-//// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-//// Debug program: F5 or Debug > Start Debugging menu
-//
-//// Tips for Getting Started: 
-////   1. Use the Solution Explorer window to add/manage files
-////   2. Use the Team Explorer window to connect to source control
-////   3. Use the Output window to see build output and other messages
-////   4. Use the Error List window to view errors
-////   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-////   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
 
 InputSample demo;
 
@@ -242,7 +203,7 @@ void burstLight(int panel, int level) {
 	for (int i = 0; i < 25; i++) {
 		int player = 1;
 		demo.SetLight(1, panel, i, burst[level][i]*255, 0, 0);
-		printf("%d\t%d\t%d\t%d\n",player,panel,i, burst[level][i]);
+//		printf("%d\t%d\t%d\t%d\n",player,panel,i, burst[level][i]);
 	}
 	return;
 }
@@ -322,7 +283,7 @@ void main(int argc, char** argv){
 				burstLight(i, 4);
 			}
 		}
-		printf("\n");
+//		printf("\n");
 		demo.updateLights();
 	}
 }
