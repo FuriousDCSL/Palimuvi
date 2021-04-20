@@ -169,14 +169,14 @@ float* getSample(void) {
 	static float fsamSum[9];
 
 	BASS_WASAPI_GetData(fft, BASS_DATA_FFT2048); // get the FFT data
-	fsamSum[0] = sumSamples(fft, 0, 40);
-	fsamSum[1] = sumSamples(fft, 40, 60);
-	fsamSum[2] = sumSamples(fft, 60, 90);
-	fsamSum[3] = sumSamples(fft, 90, 135);
-	fsamSum[4] = sumSamples(fft, 135, 202);
-	fsamSum[5] = sumSamples(fft, 202, 303);
-	fsamSum[6] = sumSamples(fft, 303, 455);
-	fsamSum[7] = sumSamples(fft, 455, 683);
+	fsamSum[0] = sumSamples(fft, 0, 4);
+	fsamSum[1] = sumSamples(fft, 40, 8);
+	fsamSum[2] = sumSamples(fft, 60, 16);
+	fsamSum[3] = sumSamples(fft, 90, 32);
+	fsamSum[4] = sumSamples(fft, 135, 64);
+	fsamSum[5] = sumSamples(fft, 202, 128);
+	fsamSum[6] = sumSamples(fft, 303, 256);
+	fsamSum[7] = sumSamples(fft, 455, 512);
 	fsamSum[8] = sumSamples(fft, 683, 1024);
 
 	return fsamSum;
@@ -259,7 +259,6 @@ void main(int argc, char** argv){
 
 		float* fsamSum;
 		fsamSum = getSample();
-		Sleep(30);
 		for (int i = 0; i < 9; i++) {
 //				printf("%d\t", int(fsamSum[i] * 255));
 			if (fsamSum[i] < 0.01) {
@@ -285,6 +284,7 @@ void main(int argc, char** argv){
 		}
 //		printf("\n");
 		demo.updateLights();
+		Sleep(30);
 	}
 }
 
