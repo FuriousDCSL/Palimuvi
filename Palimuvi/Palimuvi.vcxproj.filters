@@ -20,24 +20,25 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SMX.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="SMX.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="bass.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="basswasapi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="SMX.lib" />
-    <Library Include="bass.lib">
-      <Filter>Source Files</Filter>
+    <Library Include="basswasapi.lib">
+      <Filter>Resource Files</Filter>
     </Library>
-    <Library Include="basswasapi.lib" />
+    <Library Include="bass.lib">
+      <Filter>Resource Files</Filter>
+    </Library>
+    <Library Include="SMX.lib">
+      <Filter>Resource Files</Filter>
+    </Library>
   </ItemGroup>
 </Project>

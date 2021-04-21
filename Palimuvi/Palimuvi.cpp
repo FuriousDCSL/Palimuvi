@@ -72,44 +72,44 @@ public:
 		{
 			for (int iPanel = 0; iPanel < 9; ++iPanel)
 			{
-			bool bLight = iPanel == iPanelToLight && iPad == 0;
-			if (!bLight)
-			{
-				// We're not lighting this panel, so append black for the 4x4 and 3x3 lights.
-				for (int iLED = 0; iLED < 25; ++iLED)
-					addColor(color, color, color);
-				continue;
-			}
+				bool bLight = iPanel == iPanelToLight && iPad == 0;
+				if (!bLight)
+				{
+					// We're not lighting this panel, so append black for the 4x4 and 3x3 lights.
+					for (int iLED = 0; iLED < 25; ++iLED)
+						addColor(color, color, color);
+					continue;
+				}
 
-			// Append light data for the outer 4x4 grid of lights.
-			addColor(0xFF, 0, 0);
-			addColor(0xFF, 0, 0);
-			addColor(0xFF, 0, 0);
-			addColor(0xFF, 0, 0);
-			addColor(0, 0xFF, 0);
-			addColor(0, 0xFF, 0);
-			addColor(0, 0xFF, 0);
-			addColor(0, 0xFF, 0);
-			addColor(0, 0, 0xFF);
-			addColor(0, 0, 0xFF);
-			addColor(0, 0, 0xFF);
-			addColor(0, 0, 0xFF);
-			addColor(0xFF, 0xFF, 0);
-			addColor(0xFF, 0xFF, 0);
-			addColor(0xFF, 0xFF, 0);
-			addColor(0xFF, 0xFF, 0);
+				// Append light data for the outer 4x4 grid of lights.
+				addColor(0xFF, 0, 0);
+				addColor(0xFF, 0, 0);
+				addColor(0xFF, 0, 0);
+				addColor(0xFF, 0, 0);
+				addColor(0, 0xFF, 0);
+				addColor(0, 0xFF, 0);
+				addColor(0, 0xFF, 0);
+				addColor(0, 0xFF, 0);
+				addColor(0, 0, 0xFF);
+				addColor(0, 0, 0xFF);
+				addColor(0, 0, 0xFF);
+				addColor(0, 0, 0xFF);
+				addColor(0xFF, 0xFF, 0);
+				addColor(0xFF, 0xFF, 0);
+				addColor(0xFF, 0xFF, 0);
+				addColor(0xFF, 0xFF, 0);
 
-			// Append light data for the inner 3x3 grid of lights, if present.  These
-			// are ignored if the platform doesn't have them.
-			addColor(0xFF, 0, 0);
-			addColor(0xFF, 0, 0);
-			addColor(0xFF, 0, 0);
-			addColor(0, 0xFF, 0);
-			addColor(0, 0xFF, 0);
-			addColor(0, 0xFF, 0);
-			addColor(0, 0, 0xFF);
-			addColor(0, 0, 0xFF);
-			addColor(0, 0, 0xFF);
+				// Append light data for the inner 3x3 grid of lights, if present.  These
+				// are ignored if the platform doesn't have them.
+				addColor(0xFF, 0, 0);
+				addColor(0xFF, 0, 0);
+				addColor(0xFF, 0, 0);
+				addColor(0, 0xFF, 0);
+				addColor(0, 0xFF, 0);
+				addColor(0, 0xFF, 0);
+				addColor(0, 0, 0xFF);
+				addColor(0, 0, 0xFF);
+				addColor(0, 0, 0xFF);
 			}
 		}
 
@@ -170,14 +170,14 @@ float* getSample(void) {
 
 	BASS_WASAPI_GetData(fft, BASS_DATA_FFT2048); // get the FFT data
 	fsamSum[0] = sumSamples(fft, 0, 4);
-	fsamSum[1] = sumSamples(fft, 40, 8);
-	fsamSum[2] = sumSamples(fft, 60, 16);
-	fsamSum[3] = sumSamples(fft, 90, 32);
-	fsamSum[4] = sumSamples(fft, 135, 64);
-	fsamSum[5] = sumSamples(fft, 202, 128);
-	fsamSum[6] = sumSamples(fft, 303, 256);
-	fsamSum[7] = sumSamples(fft, 455, 512);
-	fsamSum[8] = sumSamples(fft, 683, 1024);
+	fsamSum[1] = sumSamples(fft, 4, 8);
+	fsamSum[2] = sumSamples(fft, 8, 16);
+	fsamSum[3] = sumSamples(fft, 16, 32);
+	fsamSum[4] = sumSamples(fft, 32, 64);
+	fsamSum[5] = sumSamples(fft, 64, 128);
+	fsamSum[6] = sumSamples(fft, 128, 256);
+	fsamSum[7] = sumSamples(fft, 256, 512);
+	fsamSum[8] = sumSamples(fft, 512, 1024);
 
 	return fsamSum;
 
@@ -202,8 +202,8 @@ void burstLight(int panel, int level) {
 
 	for (int i = 0; i < 25; i++) {
 		int player = 1;
-		demo.SetLight(1, panel, i, burst[level][i]*255, 0, 0);
-//		printf("%d\t%d\t%d\t%d\n",player,panel,i, burst[level][i]);
+		demo.SetLight(1, panel, i, burst[level][i] * 255, 0, 0);
+		//		printf("%d\t%d\t%d\t%d\n",player,panel,i, burst[level][i]);
 	}
 	return;
 }
@@ -235,7 +235,7 @@ void myBassInit(void) {
 }
 
 
-void main(int argc, char** argv){
+void main(int argc, char** argv) {
 
 	int filep, device = -1;
 
@@ -260,29 +260,29 @@ void main(int argc, char** argv){
 		float* fsamSum;
 		fsamSum = getSample();
 		for (int i = 0; i < 9; i++) {
-//				printf("%d\t", int(fsamSum[i] * 255));
+			//				printf("%d\t", int(fsamSum[i] * 255));
 			if (fsamSum[i] < 0.01) {
-//				printf("0\t");
+				//				printf("0\t");
 				burstLight(i, 0);
 			}
 			else if (fsamSum[i] < 0.25) {
-//				printf("1\t");
+				//				printf("1\t");
 				burstLight(i, 1);
 			}
 			else if (fsamSum[i] < 0.5) {
-//				printf("2\t");
+				//				printf("2\t");
 				burstLight(i, 2);
 			}
 			else if (fsamSum[i] < 0.75) {
-//				printf("3\t");
+				//				printf("3\t");
 				burstLight(i, 3);
 			}
 			else if (fsamSum[i] <= 1) {
-//				printf("4\t");
+				//				printf("4\t");
 				burstLight(i, 4);
 			}
 		}
-//		printf("\n");
+		//		printf("\n");
 		demo.updateLights();
 		Sleep(30);
 	}

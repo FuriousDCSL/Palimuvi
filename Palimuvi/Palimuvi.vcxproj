@@ -154,9 +154,6 @@
     <ClCompile Include="Palimuvi.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SMX.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="bass.h" />
     <ClInclude Include="basswasapi.h" />
     <ClInclude Include="SMX.h" />
