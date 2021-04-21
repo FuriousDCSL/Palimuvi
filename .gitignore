@@ -2,10 +2,10 @@
 Palimuvi/.vs/*
 
 Palimuvi/Debug/*
+Palimuvi/x64/*
 
 !Palimuvi/Debug/Palimuvi.exe
 
 !Palimuvi/Debug/*.dll
 
 
-Palimuvi/Palimuvi.vcxproj.user
